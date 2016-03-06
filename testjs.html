@@ -1,0 +1,38 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title></title>
+    <script type="text/javascript" src="../Meso/js/jquery-2.1.4.js"></script>
+    <script type="text/javascript" src="../Meso/js/jquery-1.11.3.js"></script>
+
+</head>
+<body>
+  <form method="POST">
+    <label>EMER</label>
+    <input type="text" name="emer"></input><br/>
+    <label>MBIEMER</label>
+    <input type="text" name="mbiemer"></input><br/>
+    <label>ADRESA</label>
+    <input type="text" name="adresa"></input><br/>
+    <input type="submit"></input>
+  </form>
+</body>
+</html>
+<script type="text/javascript">
+  $(document).ready( function(){
+      $('form').on('submit', function(event){
+        event.preventDefault();
+        $.ajax('postAjax.php', {
+          type: 'POST',
+          data: $('form').serialize(),
+          success: function(result){
+            $('form').remove();
+            $('body').html(result);
+          }
+
+        });
+      });
+  });
+</script>
+

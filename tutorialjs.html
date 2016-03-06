@@ -1,0 +1,215 @@
+  <script type="text/javascript" src="../Meso/js/jquery-2.1.4.js"></script>
+    <script type="text/javascript" src="../Meso/js/jquery-1.11.3.js"></script>
+<script type="text/javascript">
+  var tour = {
+  init: function() {
+    $("#tour").on("click", "button", this.fetchPhotos)
+  },
+  fetchPhotos: function(){
+     $.ajax('/photos.html', {
+
+        data: {location: $("#tour").data('location')},
+        success: function(response) {
+          $('.photos').html(response).fadeIn();
+        },
+        error: function() {
+          $('.photos').html('<li>There was a problem fetching the latest photos. Please try again.</li>');
+        },
+        timeout: 3000,
+        beforeSend: function() {
+          $('#tour').addClass('is-fetching');
+        },
+        complete: function() {
+          $('#tour').removeClass('is-fetching');
+        }
+      });    
+    }
+  }
+$(document).ready(function() { 
+  tour.init();
+});
+</script>
+<script type="text/javascript">
+  function Tour(price) {
+    console.log("A new Tour was created");
+    this.cost = function(nights){
+      console.log(price*nights);
+    }
+  }
+  $(document).ready(function() { 
+    var tour = new Tour(100);
+    tour.cost(4);
+  });
+
+</script>
+
+<script type="text/javascript">
+  $(document).ready( function() {
+  
+    var tour = new Tour($('#paris'));
+
+  });
+  function Tour(tourObject){
+    console.log(tourObject);
+  }
+</script>
+
+<script type="text/javascript">
+
+  function Tour(el) {
+    this.el = el;
+    this.fetchPhotos = function(){};
+    this.el.on('click','button',this.fetchPhotos);
+  }
+
+  $(document).ready(function() { 
+    var paris = new Tour($('#paris'));
+  });
+
+</script>
+
+<script type="text/javascript">
+
+  function Tour(el) {
+  var tour = this;
+  this.el = el;
+  this.fetchPhotos = function() {
+    $.ajax('/photos.html', {
+      context: tour,
+      data: {location: el.data('location')},
+      success: function(response) {
+        this.el.find('.photos').html(response).fadeIn();
+      },
+      error: function() {
+        this.el.find('.photos').html('<li>There was a problem fetching the latest photos. Please try again.</li>');
+      },
+      timeout: 3000,
+      beforeSend: function() {
+        this.el.addClass('is-fetching');
+      },
+      complete: function() {
+        this.el.removeClass('is-fetching');
+      }
+    });
+  };
+  this.el.on('click', 'button', this.fetchPhotos);
+}
+$(document).ready(function() { 
+  var paris = new Tour($('#paris'));
+});
+</script>
+
+<script type="text/javascript">
+  $(document).ready(function() {
+  $('form').on('submit', function(event) {
+    event.preventDefault();
+    $.ajax('/book', {
+      type: 'POST',
+      data: $('form').serialize(),
+      success: function(result){
+        $('.tour').html(result);
+      }
+    });
+  });
+});
+
+</script>
+
+<script type="text/javascript">
+  
+ $(document).ready(function() {
+  $('form').on('submit', function(event) {
+    event.preventDefault();
+    
+    $.ajax($('form').attr('action'), {
+      
+      type: $('form').attr('method'),
+      data: $('form').serialize(),
+      dataType: 'json',
+      success: function(response) {
+        $('.tour').html('<p></p>')
+                  .find('p')
+                  .append('Trip to ' + response.description)
+                  .append(' at $' + response.price)
+                  .append(' for ' + response.nights + ' nights')
+                  .append('. Confirmation: ' + response.confirmation);
+      }
+    });
+  });
+});
+
+</script>
+
+<script type="text/javascript">
+
+$('button').on('click', function() {
+  $.ajax('/cities/deals', {
+    success: function(result) {
+      // your code goes here
+      $.each(result,function(index,item){
+        console.log(item);
+      });
+    }
+  });
+});
+
+
+$('button').on('click', function() {
+  $.ajax('/cities/deals', {
+    success: function(result) {
+      $.each(result, function(index, dealItem) {
+        // Your code goes here
+        var deal = $('.deal-'+index);
+        deal.find('.name').html(dealItem.name);
+        deal.find('.price').html(dealItem.price);
+      });
+    }
+  });
+});
+
+$('button').on('click', function() {
+  $.getJSON('/cities/deals', function(result) {
+      $.each(result, function(index, dealItem) {
+        var dealElement = $('.deal-' + index);
+        dealElement.find('.name').html(dealItem.name);
+        dealElement.find('.price').html(dealItem.price);
+      });
+  });
+});
+
+
+$('.update-available-flights').on('click', function() {
+  $.getJSON('/flights/late', function(result) {
+    // Your code goes here
+    $.map(result,function(dealItem,index){
+      console.log(dealItem);
+      return dealItem;
+    });
+  });
+});
+
+
+$('.update-available-flights').on('click', function() {
+  $.getJSON('/flights/late', function(result) {
+    var flightElements = $.map(result, function(flightItem, index){
+      // Your code goes here
+      var listElement = $('<li></li>');
+      $('<h3>'+flightItem.flightNumber+'</h3>').appendTo(listElement);
+      $('<h3>'+flightItem.time+'</h3>').appendTo(listElement);
+      return listElement;
+    });
+    $('.flight-times').html(flightElements);
+  });
+});
+
+$('.update-available-flights').on('click', function() {
+  $.getJSON('/flights/late', function(result) {
+    var flightElements = $.map(result, function(flightItem, index){
+      var flightEl = $('<li>'+flightItem.flightNumber+'-'+flightItem.time+'</li>');
+      return flightEl;
+    });
+    $('.flight-times').detach().html(flightElements).appendTo($('.flights'));
+  });
+});
+
+</script>
